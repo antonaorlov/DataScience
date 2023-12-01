@@ -1,11 +1,12 @@
-import pandas as pd
+import folium
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
-from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-import folium
+
 
 
 # file_name='NYPD_Complaint_Data_Historic(2).csv'
@@ -26,7 +27,7 @@ def prepare_data(file_name):
     df = pd.read_csv(file_name)
     # rename columns names to lowercase for easy access
     df.rename(columns=str.lower, inplace=True)
-    # check for duplicates if found remove them
+    # check for duplicates just in case if original dataset had some if found remove them
     duplicates = df.columns.duplicated()
     if duplicates.any():
         print("there are duplicates")
@@ -39,7 +40,8 @@ def prepare_data(file_name):
     df = df[df["susp_race"] != "(null)"]
     df = df[df["ofns_desc"] != "(null)"]
 
-    # #dropping unecesary columns
+    # #dropping unecesary columns age gender has some weird values and coudnt understand them as well as
+    # some were missing. 
     df = df.drop(
         [
             "cmplnt_num",
@@ -183,7 +185,7 @@ def train_evauluate_model(df, non_features, test_size=0.2, random_state=42):
         X, Y, test_size=test_size, random_state=random_state
     )
 
-    # Forest classsifier
+    # Forest classsifier, values were tuned for my dataset for better predictions
     model = RandomForestClassifier(
         n_estimators=10,
         max_depth=10,
